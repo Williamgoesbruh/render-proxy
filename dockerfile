@@ -1,9 +1,16 @@
-#!/bin/bash
-# entrypoint.sh - Start Shadowsocks on Render
+FROM ubuntu:22.04
 
-# Ensure PORT and PASSWORD are set
-: "${PORT:?Need to set PORT environment variable}"
-: "${PASSWORD:?Need to set PASSWORD environment variable}"
+ENV DEBIAN_FRONTEND=noninteractive
 
-# Run Shadowsocks server
-exec ss-server -s 0.0.0.0 -p "${PORT}" -k "${PASSWORD}" -m chacha20-ietf-poly1305
+RUN apt update && \
+    apt install -y shadowsocks-libev && \
+    apt clean
+
+# Use safer runtime flags
+CMD ss-server \
+-s 0.0.0.0 \
+-p 10000 \
+-k yourpassword \
+-m chacha20-ietf-poly1305 \
+--no-delay \
+--fast-open=false
